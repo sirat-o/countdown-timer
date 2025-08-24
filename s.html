@@ -1,6 +1,8 @@
+<!-- Same like index without wake up function -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer</title>
@@ -9,608 +11,853 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-               body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* --- ENHANCED GLASSMORPHISM --- */
+      .glass-card {
+        background: rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      .glass-card:hover {
+        background: rgba(41, 40, 40, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* --- ANIMATIONS & TRANSITIONS --- */
+      .fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      .fade-out {
+        animation: fadeOut 0.5s ease-in forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
 
-        /* --- ENHANCED GLASSMORPHISM --- */
-        .glass-card {
-            background: rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        
-        .glass-card:hover {
-            background: rgba(41, 40, 40, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+          transform: translateY(0);
         }
 
-        /* --- ANIMATIONS & TRANSITIONS --- */
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
+        to {
+          opacity: 0;
+          transform: translateY(-10px);
         }
-        
-        .fade-out {
-            animation: fadeOut 0.5s ease-in forwards;
-        }
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      /* --- TIMER BLOCK FIXED SIZING --- */
+      .timer-block {
+        width: 120px;
+        /* Fixed width for all timer blocks */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
-        }
-
-        /* --- TIMER BLOCK FIXED SIZING --- */
+      @media (min-width: 768px) {
         .timer-block {
-            width: 120px; /* Fixed width for all timer blocks */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+          width: 200px;
+          /* Larger fixed width for desktop */
         }
-        
-        @media (min-width: 768px) {
-            .timer-block {
-                width: 200px; /* Larger fixed width for desktop */
-            }
+      }
+
+      .timer-value {
+        width: 100%;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        /* Ensures consistent digit width */
+      }
+
+      /* --- TIMER SEPARATOR STYLING --- */
+      .timer-separator {
+        font-size: clamp(2.5rem, 10vw, 5rem);
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-0.75rem);
+        /* Vertically align with numbers */
+        margin: 0 -0.5rem;
+        /* Adjust spacing */
+      }
+
+      :fullscreen .timer-separator {
+        transform: translateY(-1.5rem);
+        color: #e0e0e0;
+        font-weight: 900;
+        font-size: clamp(2.5rem, 10vw, 10rem);
+      }
+
+      /* --- ENHANCED TOAST NOTIFICATIONS --- */
+      .glass-toast {
+        background: rgba(30, 30, 40, 0.7);
+        backdrop-filter: blur(15px) saturate(180%);
+        -webkit-backdrop-filter: blur(15px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      .toast {
+        animation: slideIn 0.5s ease-out forwards, slideOut 0.5s ease-in 4.5s forwards;
+      }
+
+      .toast-progress {
+        animation: progress 4s linear 0.5s forwards;
+        /* Delay start */
+        height: 4px;
+        border-radius: 4px;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(calc(100% + 1.25rem));
+          opacity: 0;
         }
 
-        .timer-value {
-            width: 100%;
-            text-align: center;
-            font-variant-numeric: tabular-nums; /* Ensures consistent digit width */
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
         }
 
-        /* --- TIMER SEPARATOR STYLING --- */
-        .timer-separator {
-            font-size: clamp(2.5rem, 10vw, 5rem);
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-0.75rem); /* Vertically align with numbers */
-            margin: 0 -0.5rem; /* Adjust spacing */
+        to {
+          opacity: 0;
+          transform: translateX(calc(100% + 1.25rem));
         }
-        
-        :fullscreen .timer-separator {
-            transform: translateY(-1.5rem);
-            color: #e0e0e0;
-            font-weight: 900;
-            font-size: clamp(2.5rem, 10vw, 10rem);
+      }
+
+      @keyframes progress {
+        from {
+          width: 100%;
         }
 
-        /* --- ENHANCED TOAST NOTIFICATIONS --- */
-        .glass-toast {
-            background: rgba(30, 30, 40, 0.7);
-            backdrop-filter: blur(15px) saturate(180%);
-            -webkit-backdrop-filter: blur(15px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        to {
+          width: 0%;
         }
-        
-        .toast {
-            animation: slideIn 0.5s ease-out forwards, slideOut 0.5s ease-in 4.5s forwards;
-        }
-        
-        .toast-progress {
-            animation: progress 4s linear 0.5s forwards; /* Delay start */
-            height: 4px;
-            border-radius: 4px;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(calc(100% + 1.25rem)); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(calc(100% + 1.25rem)); }
-        }
-        
-        @keyframes progress {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
+      }
 
-        /* --- ENHANCED FULLSCREEN DESIGN --- */
-        body:fullscreen {
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-        }
+      /* --- ENHANCED FULLSCREEN DESIGN --- */
+      body:fullscreen {
+        background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      }
 
-        :fullscreen #timer-display {
-            gap: 2rem;
-        }
-        
-        :fullscreen .glass-card {
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: none;
-            box-shadow: none;
-            padding: 0;
+      :fullscreen #timer-display {
+        gap: 2rem;
+      }
+
+      :fullscreen .glass-card {
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      :fullscreen .timer-value {
+        color: #e0e0e0;
+      }
+
+      :fullscreen .timer-block {
+        width: 20vw;
+        /* Responsive but consistent width in fullscreen */
+      }
+
+      /* --- MOBILE FULLSCREEN FIXES --- */
+      @media (max-width: 768px) {
+        :fullscreen .timer-block {
+          width: 22vw;
+          /* Slightly larger for mobile */
+          min-width: 70px;
+          /* Prevent becoming too small */
         }
 
         :fullscreen .timer-value {
-             color: #e0e0e0;
+          font-size: 3.5rem !important;
+          /* Force larger font size on mobile */
         }
-        
+
+        :fullscreen #timer-display {
+          gap: 0.5rem;
+          /* Reduce gap on mobile */
+          flex-wrap: nowrap;
+          /* Ensure all elements stay in one row */
+        }
+
+        :fullscreen .timer-separator {
+          font-size: 2.5rem;
+          transform: translateY(-0.5rem);
+          margin: 0 -0.25rem;
+        }
+
+        /* Adjust font sizes for mobile fullscreen */
+        :fullscreen #days,
+        :fullscreen #hours,
+        :fullscreen #minutes,
+        :fullscreen #seconds {
+          font-size: 3.5rem !important;
+        }
+      }
+
+      /* Additional mobile-specific fullscreen adjustments */
+      @media (max-width: 480px) and (fullscreen) {
         :fullscreen .timer-block {
-            width: 20vw; /* Responsive but consistent width in fullscreen */
+          width: 20vw;
+          min-width: 60px;
         }
 
-        /* --- MOBILE FULLSCREEN FIXES --- */
-        @media (max-width: 768px) {
-            :fullscreen .timer-block {
-                width: 22vw; /* Slightly larger for mobile */
-                min-width: 70px; /* Prevent becoming too small */
-            }
-            
-            :fullscreen .timer-value {
-                font-size: 3.5rem !important; /* Force larger font size on mobile */
-            }
-            
-            :fullscreen #timer-display {
-                gap: 0.5rem; /* Reduce gap on mobile */
-                flex-wrap: nowrap; /* Ensure all elements stay in one row */
-            }
-            
-            :fullscreen .timer-separator {
-                font-size: 2.5rem;
-                transform: translateY(-0.5rem);
-                margin: 0 -0.25rem;
-            }
-            
-            /* Adjust font sizes for mobile fullscreen */
-            :fullscreen #days, 
-            :fullscreen #hours, 
-            :fullscreen #minutes, 
-            :fullscreen #seconds {
-                font-size: 3.5rem !important;
-            }
+        :fullscreen .timer-value {
+          font-size: 2.8rem !important;
         }
 
-        /* Additional mobile-specific fullscreen adjustments */
-        @media (max-width: 480px) and (fullscreen) {
-            :fullscreen .timer-block {
-                width: 20vw;
-                min-width: 60px;
-            }
-            
-            :fullscreen .timer-value {
-                font-size: 2.8rem !important;
-            }
-            
-            :fullscreen #days, 
-            :fullscreen #hours, 
-            :fullscreen #minutes, 
-            :fullscreen #seconds {
-                font-size: 2.8rem !important;
-            }
-            
-            :fullscreen .timer-separator {
-                font-size: 2rem;
-                transform: translateY(-0.4rem);
-            }
-            
-            :fullscreen #timer-display {
-                gap: 0.25rem;
-            }
+        :fullscreen #days,
+        :fullscreen #hours,
+        :fullscreen #minutes,
+        :fullscreen #seconds {
+          font-size: 2.8rem !important;
         }
 
-        /* Fix for very small mobile devices */
-        @media (max-width: 360px) and (fullscreen) {
-            :fullscreen .timer-block {
-                width: 18vw;
-                min-width: 50px;
-            }
-            
-            :fullscreen .timer-value {
-                font-size: 2.2rem !important;
-            }
-            
-            :fullscreen #days, 
-            :fullscreen #hours, 
-            :fullscreen #minutes, 
-            :fullscreen #seconds {
-                font-size: 2.2rem !important;
-            }
-            
-            :fullscreen .timer-separator {
-                font-size: 1.6rem;
-                transform: translateY(-0.3rem);
-            }
+        :fullscreen .timer-separator {
+          font-size: 2rem;
+          transform: translateY(-0.4rem);
         }
 
-        /* Ensure proper layout in portrait mode */
-        @media (orientation: portrait) and (fullscreen) {
-            :fullscreen #timer-display {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
+        :fullscreen #timer-display {
+          gap: 0.25rem;
+        }
+      }
+
+      /* Fix for very small mobile devices */
+      @media (max-width: 360px) and (fullscreen) {
+        :fullscreen .timer-block {
+          width: 18vw;
+          min-width: 50px;
         }
 
-        /* --- ENHANCED DATE/TIME PICKER STYLING --- */
-#date-picker, #time-picker {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: white;
-    border-radius: 12px;
-    padding: 14px 18px;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    min-width: 180px;
+        :fullscreen .timer-value {
+          font-size: 2.2rem !important;
+        }
+
+        :fullscreen #days,
+        :fullscreen #hours,
+        :fullscreen #minutes,
+        :fullscreen #seconds {
+          font-size: 2.2rem !important;
+        }
+
+        :fullscreen .timer-separator {
+          font-size: 1.6rem;
+          transform: translateY(-0.3rem);
+        }
+      }
+
+      /* Ensure proper layout in portrait mode */
+      @media (orientation: portrait) and (fullscreen) {
+        :fullscreen #timer-display {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      /* --- ENHANCED DATE/TIME PICKER STYLING --- */
+      #date-picker,
+      #time-picker {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: white;
+        border-radius: 12px;
+        padding: 14px 18px;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        min-width: 180px;
+      }
+
+      #date-picker:hover,
+      #time-picker:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      #date-picker:focus,
+      #time-picker:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(139, 92, 246, 0.6);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+        outline: none;
+      }
+
+      /* Placeholder text color */
+      #date-picker::placeholder,
+      #time-picker::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* Calendar dropdown styling */
+      #date-picker::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.7;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      #date-picker::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
+      }
+
+      /* Time picker dropdown arrow */
+      #time-picker::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.7;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      #time-picker::-webkit-calendar-picker-indicator:hover {
+        opacity: 1;
+      }
+
+      /* For Firefox */
+      #date-picker::-moz-focus-inner,
+      #time-picker::-moz-focus-inner {
+        border: 0;
+      }
+
+      #date-picker:-moz-ui-invalid,
+      #time-picker:-moz-ui-invalid {
+        box-shadow: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 640px) {
+
+        #date-picker,
+        #time-picker {
+          width: 100%;
+          margin-bottom: 12px;
+        }
+      }
+
+      /* --- FULLSCREEN RESUME BUTTON --- */
+      #fullscreen-resume-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        display: none;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        padding: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      #fullscreen-resume-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      :fullscreen #fullscreen-resume-btn {
+        display: none;
+        /* Hidden by default, shown only when paused */
+      }
+
+      :fullscreen #fullscreen-resume-btn.visible {
+        display: block;
+      }
+
+      /* Modal Styles */
+      #help-modal.active {
+        display: block;
+      }
+
+      #help-modal.active .glass-toast {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      /* Modal backdrop blur effect */
+      #modal-backdrop {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+
+  #help-btn {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #help-btn svg {
+    width: 25px;
+    height: 25px;
+  }
+/* Hide help button in fullscreen mode */
+:fullscreen #help-btn {
+  display: none;
 }
 
-#date-picker:hover, #time-picker:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
-}
-
-#date-picker:focus, #time-picker:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(139, 92, 246, 0.6);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
-    outline: none;
-}
-
-/* Placeholder text color */
-#date-picker::placeholder, #time-picker::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-/* Calendar dropdown styling */
-#date-picker::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    opacity: 0.7;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-#date-picker::-webkit-calendar-picker-indicator:hover {
-    opacity: 1;
-}
-
-/* Time picker dropdown arrow */
-#time-picker::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    opacity: 0.7;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-#time-picker::-webkit-calendar-picker-indicator:hover {
-    opacity: 1;
-}
-
-/* For Firefox */
-#date-picker::-moz-focus-inner, #time-picker::-moz-focus-inner {
-    border: 0;
-}
-
-#date-picker:-moz-ui-invalid, #time-picker:-moz-ui-invalid {
-    box-shadow: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 640px) {
-    #date-picker, #time-picker {
-        width: 100%;
-        margin-bottom: 12px;
-    }
+/* Also hide when using browser-specific fullscreen pseudo-classes */
+:-webkit-full-screen #help-btn,
+:-moz-full-screen #help-btn,
+:-ms-fullscreen #help-btn {
+  display: none;
 }
     </style>
-</head>
-<body class="bg-gradient-to-br from-[#111827] to-[#000000] text-white min-h-screen flex items-center justify-center p-4 transition-colors duration-500">
+  </head>
 
+  <body class="bg-gradient-to-br from-[#111827] to-[#000000] text-white min-h-screen flex items-center justify-center p-4 transition-colors duration-500">
+
+        <button id="help-btn" class="fixed top-5 right-5 glass-card p-3 rounded-full hover:bg-white/20 transition-all duration-300 z-50" title="Keyboard Shortcuts & Help">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+    </button>
     <div id="app-container" class="w-full max-w-5xl mx-auto text-center">
 
-        <div id="setup-section" class="space-y-8">
-            <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Countdown Timer</h1>
-            <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">Select a future date and time to begin the countdown.</p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <input type="date" id="date-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-                <input type="time" id="time-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-                <button id="start-btn" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl shadow-purple-600/30 hover:shadow-purple-600/40 transform hover:-translate-y-1">
-                    Start Countdown
-                </button>
-            </div>
-        </div>
-
-        <div id="timer-section" class="hidden">
-            <h2 id="target-date-display" class="text-base md:text-lg text-gray-400 mb-6 font-medium"></h2>
-
-            <div id="timer-display" class="flex flex-wrap items-center justify-center gap-x-2 md:gap-x-4 mb-12">
-                <div id="days-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
-                    <span id="days" class="timer-value block text-5xl md:text-8xl font-black">00</span>
-                    <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Days</span>
-                </div>
-                <div id="hours-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
-                    <span id="hours" class="timer-value block text-5xl md:text-8xl font-black">00</span>
-                    <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Hours</span>
-                </div>
-
-                <div id="separator-hm" class="timer-separator">:</div>
-
-                <div id="minutes-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
-                    <span id="minutes" class="timer-value block text-5xl md:text-8xl font-black">00</span>
-                    <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Minutes</span>
-                </div>
-
-                <div id="separator-ms" class="timer-separator">:</div>
-                
-                <div id="seconds-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
-                    <span id="seconds" class="timer-value block text-5xl md:text-8xl font-black">00</span>
-                    <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Seconds</span>
-                </div>
-            </div>
-            <div id="control-buttons" class="flex items-center justify-center gap-4">
-<button id="pause-resume-btn" 
-    class="glass-card text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300 w-24">
-    Pause
-</button>
-
-<button id="reset-btn" 
-    class="glass-card text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300">
-    Reset
-</button>
-
-            </div>
+      <div id="setup-section" class="space-y-8">
+        <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Countdown Timer</h1>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">Select a future date and time to begin the countdown.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <input type="date" id="date-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+          <input type="time" id="time-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+          <button id="start-btn" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl shadow-purple-600/30 hover:shadow-purple-600/40 transform hover:-translate-y-1">
+            Start Countdown
+          </button>
         </div>
         
-        <button id="fullscreen-btn" class="fixed bottom-5 right-5 glass-card p-3 rounded-full hover:bg-white/20 transition-all duration-300 z-10" title="Toggle Fullscreen">
-            <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-            </svg>
-            <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
-                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-            </svg>
-        </button>
+      </div>
+
+      <div id="timer-section" class="hidden">
+        <h2 id="target-date-display" class="text-base md:text-lg text-gray-400 mb-6 font-medium"></h2>
+
+        <div id="timer-display" class="flex flex-wrap items-center justify-center gap-x-2 md:gap-x-4 mb-12">
+          <div id="days-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
+            <span id="days" class="timer-value block text-5xl md:text-8xl font-black">00</span>
+            <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Days</span>
+          </div>
+          <div id="hours-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
+            <span id="hours" class="timer-value block text-5xl md:text-8xl font-black">00</span>
+            <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Hours</span>
+          </div>
+
+          <div id="separator-hm" class="timer-separator">:</div>
+
+          <div id="minutes-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
+            <span id="minutes" class="timer-value block text-5xl md:text-8xl font-black">00</span>
+            <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Minutes</span>
+          </div>
+
+          <div id="separator-ms" class="timer-separator">:</div>
+
+          <div id="seconds-block" class="timer-block glass-card p-6 md:p-10 rounded-2xl">
+            <span id="seconds" class="timer-value block text-5xl md:text-8xl font-black">00</span>
+            <span class="timer-label block text-sm md:text-lg text-gray-400 uppercase tracking-widest">Seconds</span>
+          </div>
+        </div>
+        <div id="control-buttons" class="flex items-center justify-center gap-4">
+          <button id="pause-resume-btn" class="glass-card text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300 w-24">
+            Pause
+          </button>
+
+          <button id="reset-btn" class="glass-card text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300">
+            Reset
+          </button>
+
+        </div>
+      </div>
+
+      <button id="fullscreen-btn" class="fixed bottom-5 right-5 glass-card p-3 rounded-full hover:bg-white/20 transition-all duration-300 z-10" title="Toggle Fullscreen">
+        <svg id="fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
+        <svg id="exit-fullscreen-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 z-50 hidden">
+      <div id="modal-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"></div>
+      <div class="relative flex items-center justify-center min-h-screen p-4">
+        <div class="glass-toast rounded-2xl max-w-md w-full p-6 transform transition-all duration-300 scale-95 opacity-0">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-white">Keyboard Shortcuts & Help</h3>
+            <button id="close-modal" class="glass-card p-1 rounded-full hover:bg-white/20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="space-y-4 text-gray-300">
+            <div class="flex items-center justify-between py-2 border-b border-white/10">
+              <span>Spacebar</span>
+              <span class="bg-white/10 px-3 py-1 rounded-md">Pause/Resume</span>
+            </div>
+            <div class="flex items-center justify-between py-2 border-b border-white/10">
+              <span>F Key</span>
+              <span class="bg-white/10 px-3 py-1 rounded-md">Toggle Fullscreen</span>
+            </div>
+            <p class="pt-4 text-sm">Select a future date and time, then click Start Countdown. The timer will continue running even if you close the browser.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="toast-container" class="fixed top-5 right-5 space-y-3 z-50"></div>
 
+    <!-- Fullscreen Resume Button -->
+    <button id="fullscreen-resume-btn" class="glass-card" title="Resume Timer">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+    </button>
+
+    <div id="toast-container" class="fixed top-5 right-5 space-y-3 z-50"></div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- STATE MANAGEMENT ---
-            let countdownInterval;
-            let targetDate;
-            let remainingTimeOnPause = 0;
-            let isPaused = false;
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- STATE MANAGEMENT ---
+    let countdownInterval;
+    let targetDate;
+    let remainingTimeOnPause = 0;
+    let isPaused = false;
 
-            // --- DOM ELEMENT REFERENCES ---
-            const dom = {
-                setupSection: document.getElementById('setup-section'),
-                timerSection: document.getElementById('timer-section'),
-                datePicker: document.getElementById('date-picker'),
-                timePicker: document.getElementById('time-picker'),
-                startBtn: document.getElementById('start-btn'),
-                resetBtn: document.getElementById('reset-btn'),
-                pauseResumeBtn: document.getElementById('pause-resume-btn'),
-                fullscreenBtn: document.getElementById('fullscreen-btn'),
-                fullscreenIcon: document.getElementById('fullscreen-icon'),
-                exitFullscreenIcon: document.getElementById('exit-fullscreen-icon'),
-                targetDateDisplay: document.getElementById('target-date-display'),
-                daysBlock: document.getElementById('days-block'),
-                hoursBlock: document.getElementById('hours-block'),
-                separatorHM: document.getElementById('separator-hm'),
-                daysEl: document.getElementById('days'),
-                hoursEl: document.getElementById('hours'),
-                minutesEl: document.getElementById('minutes'),
-                secondsEl: document.getElementById('seconds'),
-                timerValues: document.querySelectorAll('.timer-value'),
-                timerLabels: document.querySelectorAll('.timer-label'),
-                controlButtons: document.getElementById('control-buttons'),
-            };
+    // --- DOM ELEMENT REFERENCES ---
+    const dom = {
+      setupSection: document.getElementById('setup-section'),
+      timerSection: document.getElementById('timer-section'),
+      datePicker: document.getElementById('date-picker'),
+      timePicker: document.getElementById('time-picker'),
+      startBtn: document.getElementById('start-btn'),
+      resetBtn: document.getElementById('reset-btn'),
+      pauseResumeBtn: document.getElementById('pause-resume-btn'),
+      fullscreenBtn: document.getElementById('fullscreen-btn'),
+      fullscreenIcon: document.getElementById('fullscreen-icon'),
+      exitFullscreenIcon: document.getElementById('exit-fullscreen-icon'),
+      targetDateDisplay: document.getElementById('target-date-display'),
+      daysBlock: document.getElementById('days-block'),
+      hoursBlock: document.getElementById('hours-block'),
+      separatorHM: document.getElementById('separator-hm'),
+      daysEl: document.getElementById('days'),
+      hoursEl: document.getElementById('hours'),
+      minutesEl: document.getElementById('minutes'),
+      secondsEl: document.getElementById('seconds'),
+      timerValues: document.querySelectorAll('.timer-value'),
+      timerLabels: document.querySelectorAll('.timer-label'),
+      controlButtons: document.getElementById('control-buttons'),
+      fullscreenResumeBtn: document.getElementById('fullscreen-resume-btn'),
+      helpBtn: document.getElementById('help-btn'),
+      helpModal: document.getElementById('help-modal'),
+      closeModal: document.getElementById('close-modal'),
+      modalBackdrop: document.getElementById('modal-backdrop'),
+    };
 
-            // --- CORE TIMER LOGIC ---
+    // Modal event listeners
+    dom.helpBtn.addEventListener('click', () => {
+      dom.helpModal.classList.add('active');
+      setTimeout(() => {
+        dom.helpModal.querySelector('.glass-toast').classList.remove('scale-95', 'opacity-0');
+      }, 10);
+    });
+    
+    dom.closeModal.addEventListener('click', closeHelpModal);
+    dom.modalBackdrop.addEventListener('click', closeHelpModal);
+    
+    // Add function to close modal
+    function closeHelpModal() {
+      dom.helpModal.querySelector('.glass-toast').classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        dom.helpModal.classList.remove('active');
+      }, 300);
+    }
+    
+    // Add ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dom.helpModal.classList.contains('active')) {
+        closeHelpModal();
+      }
+    });
 
-            function startTimer(target) {
-                targetDate = target;
-                isPaused = false;
-                dom.pauseResumeBtn.textContent = 'Pause';
-                
-                dom.setupSection.classList.add('hidden');
-                dom.timerSection.classList.remove('hidden');
-                dom.timerSection.classList.add('fade-in');
+    // --- CORE TIMER LOGIC ---
+    function startTimer(target) {
+      targetDate = target;
+      isPaused = false;
+      dom.pauseResumeBtn.textContent = 'Pause';
+      dom.setupSection.classList.add('hidden');
+      dom.timerSection.classList.remove('hidden');
+      dom.timerSection.classList.add('fade-in');
+      
+      const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      
+      dom.targetDateDisplay.textContent = `Counting down to ${new Date(targetDate).toLocaleDateString(undefined, options)}`;
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+      
+      // Update fullscreen resume button visibility
+      updateFullscreenResumeButton();
+    }
 
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                dom.targetDateDisplay.textContent = `Counting down to ${new Date(targetDate).toLocaleDateString(undefined, options)}`;
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      
+      if (distance <= 0) {
+        clearInterval(countdownInterval);
+        Object.values(dom).filter(el => el.classList && el.classList.contains('timer-value')).forEach(el => el.textContent = '00');
+        showToast("Time's up! The countdown has finished.", 'info');
+        dom.pauseResumeBtn.disabled = true;
+        return;
+      }
+      
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      dom.daysEl.textContent = String(days).padStart(2, '0');
+      dom.hoursEl.textContent = String(hours).padStart(2, '0');
+      dom.minutesEl.textContent = String(minutes).padStart(2, '0');
+      dom.secondsEl.textContent = String(seconds).padStart(2, '0');
+      
+      // Logic to hide blocks AND separators when their value is zero
+      const showDays = days > 0;
+      const showHours = hours > 0 || showDays;
+      
+      dom.daysBlock.classList.toggle('hidden', !showDays);
+      dom.hoursBlock.classList.toggle('hidden', !showHours);
+      dom.separatorHM.classList.toggle('hidden', !showHours); // Hide separator with hours block
+    }
 
-                clearInterval(countdownInterval);
-                countdownInterval = setInterval(updateCountdown, 1000);
-                updateCountdown();
-            }
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      localStorage.removeItem('countdownTarget');
+      isPaused = false;
+      dom.timerSection.classList.add('hidden');
+      dom.setupSection.classList.remove('hidden');
+      dom.setupSection.classList.add('fade-in');
+      dom.pauseResumeBtn.disabled = false;
+      dom.pauseResumeBtn.textContent = 'Pause';
+      
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      const localToday = new Date(today.getTime() - (offset * 60 * 1000));
+      dom.datePicker.value = localToday.toISOString().split('T')[0];
+      dom.timePicker.value = '';
+      
+      // Hide fullscreen resume button
+      dom.fullscreenResumeBtn.classList.remove('visible');
+      showToast('Timer has been reset.', 'info');
+    }
 
-            function updateCountdown() {
-                const now = new Date().getTime();
-                const distance = targetDate - now;
+    function pauseResumeTimer() {
+      isPaused = !isPaused;
+      
+      if (isPaused) {
+        clearInterval(countdownInterval);
+        remainingTimeOnPause = targetDate - new Date().getTime();
+        dom.pauseResumeBtn.textContent = 'Resume';
+      } else {
+        targetDate = new Date().getTime() + remainingTimeOnPause;
+        localStorage.setItem('countdownTarget', targetDate); // Re-save target on resume
+        startTimer(targetDate);
+        dom.pauseResumeBtn.textContent = 'Pause';
+      }
+      
+      // Update fullscreen resume button visibility
+      updateFullscreenResumeButton();
+    }
 
-                if (distance <= 0) {
-                    clearInterval(countdownInterval);
-                    Object.values(dom).filter(el => el.classList && el.classList.contains('timer-value')).forEach(el => el.textContent = '00');
-                    showToast("Time's up! The countdown has finished.", 'info');
-                    dom.pauseResumeBtn.disabled = true;
-                    return;
-                }
+    // --- FULLSCREEN RESUME BUTTON FUNCTIONS ---
+    function updateFullscreenResumeButton() {
+      const isFullscreen = !!document.fullscreenElement;
+      if (isFullscreen && isPaused) {
+        dom.fullscreenResumeBtn.classList.add('visible');
+      } else {
+        dom.fullscreenResumeBtn.classList.remove('visible');
+      }
+    }
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    // --- EVENT LISTENERS ---
+    dom.startBtn.addEventListener('click', () => {
+      const dateValue = dom.datePicker.value;
+      const timeValue = dom.timePicker.value;
+      
+      if (!dateValue || !timeValue) {
+        showToast('Please select both a date and a time.', 'error');
+        return;
+      }
+      
+      const targetTimestamp = new Date(`${dateValue}T${timeValue}`).getTime();
+      
+      if (targetTimestamp <= new Date().getTime()) {
+        showToast('Please select a time in the future.', 'error');
+        return;
+      }
+      
+      localStorage.setItem('countdownTarget', targetTimestamp);
+      startTimer(targetTimestamp);
+      showToast('Countdown started successfully!', 'success');
+    });
 
-                dom.daysEl.textContent = String(days).padStart(2, '0');
-                dom.hoursEl.textContent = String(hours).padStart(2, '0');
-                dom.minutesEl.textContent = String(minutes).padStart(2, '0');
-                dom.secondsEl.textContent = String(seconds).padStart(2, '0');
-                
-                // Logic to hide blocks AND separators when their value is zero
-                const showDays = days > 0;
-                const showHours = hours > 0 || showDays;
-                
-                dom.daysBlock.classList.toggle('hidden', !showDays);
-                dom.hoursBlock.classList.toggle('hidden', !showHours);
-                dom.separatorHM.classList.toggle('hidden', !showHours); // Hide separator with hours block
-            }
-
-            function resetTimer() {
-                clearInterval(countdownInterval);
-                localStorage.removeItem('countdownTarget');
-                isPaused = false;
-                
-                dom.timerSection.classList.add('hidden');
-                dom.setupSection.classList.remove('hidden');
-                dom.setupSection.classList.add('fade-in');
-                
-                dom.pauseResumeBtn.disabled = false;
-                dom.pauseResumeBtn.textContent = 'Pause';
-                
-                const today = new Date();
-                const offset = today.getTimezoneOffset();
-                const localToday = new Date(today.getTime() - (offset*60*1000));
-                dom.datePicker.value = localToday.toISOString().split('T')[0];
-                dom.timePicker.value = '';
-
-                showToast('Timer has been reset.', 'info');
-            }
-            
-            function pauseResumeTimer() {
-                isPaused = !isPaused;
-                if (isPaused) {
-                    clearInterval(countdownInterval);
-                    remainingTimeOnPause = targetDate - new Date().getTime();
-                    dom.pauseResumeBtn.textContent = 'Resume';
-                    showToast('Timer paused.', 'info');
-                } else {
-                    targetDate = new Date().getTime() + remainingTimeOnPause;
-                    localStorage.setItem('countdownTarget', targetDate); // Re-save target on resume
-                    startTimer(targetDate);
-                    dom.pauseResumeBtn.textContent = 'Pause';
-                    showToast('Timer resumed.', 'success');
-                }
-            }
-            
-            // --- EVENT LISTENERS (No changes needed here) ---
-
-            dom.startBtn.addEventListener('click', () => {
-                const dateValue = dom.datePicker.value;
-                const timeValue = dom.timePicker.value;
-                if (!dateValue || !timeValue) {
-                    showToast('Please select both a date and a time.', 'error'); return;
-                }
-                const targetTimestamp = new Date(`${dateValue}T${timeValue}`).getTime();
-                if (targetTimestamp <= new Date().getTime()) {
-                    showToast('Please select a time in the future.', 'error'); return;
-                }
-                localStorage.setItem('countdownTarget', targetTimestamp);
-                startTimer(targetTimestamp);
-                showToast('Countdown started successfully!', 'success');
-            });
-
-            dom.resetBtn.addEventListener('click', resetTimer);
-            dom.pauseResumeBtn.addEventListener('click', pauseResumeTimer);
-
-            // Add spacebar functionality for pause/resume
-            document.addEventListener('keydown', (e) => {
-                // Only trigger if timer is active and not in an input field
-                if (e.code === 'Space' && !dom.timerSection.classList.contains('hidden') && 
-                    e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    pauseResumeTimer();
-                }
-                
-                // Add 'f' key for fullscreen toggle
-                if (e.code === 'KeyF' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    toggleFullscreen();
-                }
-            });
-
-            // Enhanced fullscreen functionality
-            function toggleFullscreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        showToast(`Error enabling full-screen mode: ${err.message}`, 'error');
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            }
-            
-            dom.fullscreenBtn.addEventListener('click', toggleFullscreen);
-            
-            document.addEventListener('fullscreenchange', () => {
-                const isFullscreen = !!document.fullscreenElement;
-                if (dom.timerSection.classList.contains('hidden')) return;
-
-                dom.controlButtons.classList.toggle('hidden', isFullscreen);
-                dom.targetDateDisplay.classList.toggle('hidden', isFullscreen);
-                dom.fullscreenIcon.classList.toggle('hidden', isFullscreen);
-                dom.exitFullscreenIcon.classList.toggle('hidden', !isFullscreen);
-                
-                dom.timerValues.forEach(el => {
-                    el.classList.toggle('md:text-8xl', !isFullscreen);
-                    el.classList.toggle('text-5xl', !isFullscreen);
-                    el.classList.toggle('md:text-9xl', isFullscreen);
-                    el.classList.toggle('lg:text-[15vw]', isFullscreen);
-                });
-                dom.timerLabels.forEach(el => el.classList.toggle('hidden', isFullscreen));
-            });
-
-
-            // --- TOAST NOTIFICATION SYSTEM (No changes needed here) ---
-            function showToast(message, type = 'info') {
-                const toastContainer = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                let icon, progressColor;
-                switch (type) {
-                    case 'success':
-                        progressColor = 'bg-green-400';
-                        icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`; break;
-                    case 'error':
-                        progressColor = 'bg-red-400';
-                        icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`; break;
-                    default:
-                        progressColor = 'bg-blue-400';
-                        icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`; break;
-                }
-                toast.className = `toast glass-toast text-white p-4 rounded-lg flex items-center gap-4 w-full max-w-sm`;
-                toast.innerHTML = `<div class="flex-shrink-0">${icon}</div><div class="flex-grow text-sm font-medium">${message}</div><div class="absolute bottom-0 left-0 w-full h-1"><div class="${progressColor} toast-progress"></div></div>`;
-                toastContainer.appendChild(toast);
-                setTimeout(() => toast.remove(), 5000);
-            }
-
-            // --- INITIALIZATION ---
-            function init() {
-                const today = new Date();
-                const offset = today.getTimezoneOffset();
-                const localToday = new Date(today.getTime() - (offset*60*1000));
-                dom.datePicker.value = localToday.toISOString().split('T')[0];
-                const savedTarget = localStorage.getItem('countdownTarget');
-                if (savedTarget) {
-                    const targetTime = parseInt(savedTarget, 10);
-                    if (targetTime > new Date().getTime()) {
-                        startTimer(targetTime);
-                    } else { localStorage.removeItem('countdownTarget'); }
-                }
-            }
-
-            init();
+    dom.resetBtn.addEventListener('click', resetTimer);
+    dom.pauseResumeBtn.addEventListener('click', pauseResumeTimer);
+    
+    // Fullscreen resume button click handler
+    dom.fullscreenResumeBtn.addEventListener('click', () => {
+      if (isPaused) {
+        pauseResumeTimer();
+      }
+    });
+    
+    // Add spacebar functionality for pause/resume
+    document.addEventListener('keydown', (e) => {
+      // Only trigger if timer is active and not in an input field
+      if (e.code === 'Space' && !dom.timerSection.classList.contains('hidden') &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        pauseResumeTimer();
+      }
+      
+      // Add 'f' key for fullscreen toggle
+      if (e.code === 'KeyF' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+    
+    // Enhanced fullscreen functionality
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          showToast(`Error enabling full-screen mode: ${err.message}`, 'error');
         });
-    </script>
-</body>
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    
+    dom.fullscreenBtn.addEventListener('click', toggleFullscreen);
+    
+    document.addEventListener('fullscreenchange', () => {
+      const isFullscreen = !!document.fullscreenElement;
+      
+      if (dom.timerSection.classList.contains('hidden')) return;
+      
+      dom.controlButtons.classList.toggle('hidden', isFullscreen);
+      dom.targetDateDisplay.classList.toggle('hidden', isFullscreen);
+      dom.fullscreenIcon.classList.toggle('hidden', isFullscreen);
+      dom.exitFullscreenIcon.classList.toggle('hidden', !isFullscreen);
+      
+      dom.timerValues.forEach(el => {
+        el.classList.toggle('md:text-8xl', !isFullscreen);
+        el.classList.toggle('text-5xl', !isFullscreen);
+        el.classList.toggle('md:text-9xl', isFullscreen);
+        el.classList.toggle('lg:text-[15vw]', isFullscreen);
+      });
+      
+      dom.timerLabels.forEach(el => el.classList.toggle('hidden', isFullscreen));
+      
+      // Update fullscreen resume button visibility
+      updateFullscreenResumeButton();
+    });
+
+    // --- TOAST NOTIFICATION SYSTEM ---
+    function showToast(message, type = 'info') {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let icon, progressColor;
+      
+      switch (type) {
+        case 'success':
+          progressColor = 'bg-green-400';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
+          break;
+        case 'error':
+          progressColor = 'bg-red-400';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+          break;
+        default:
+          progressColor = 'bg-blue-400';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+          break;
+      }
+      
+      toast.className = `toast glass-toast text-white p-4 rounded-lg flex items-center gap-4 w-full max-w-sm`;
+      toast.innerHTML = `<div class="flex-shrink-0">${icon}</div><div class="flex-grow text-sm font-medium">${message}</div><div class="absolute bottom-0 left-0 w-full h-1"><div class="${progressColor} toast-progress"></div></div>`;
+      toastContainer.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
+    }
+
+    // --- INITIALIZATION ---
+    function init() {
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      const localToday = new Date(today.getTime() - (offset * 60 * 1000));
+      dom.datePicker.value = localToday.toISOString().split('T')[0];
+      
+      const savedTarget = localStorage.getItem('countdownTarget');
+      if (savedTarget) {
+        const targetTime = parseInt(savedTarget, 10);
+        if (targetTime > new Date().getTime()) {
+          startTimer(targetTime);
+        } else {
+          localStorage.removeItem('countdownTarget');
+        }
+      }
+    }
+    
+    init();
+  });
+</script>
+  </body>
+
 </html>
