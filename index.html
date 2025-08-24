@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
+               body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -17,7 +17,7 @@
 
         /* --- ENHANCED GLASSMORPHISM --- */
         .glass-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -25,7 +25,7 @@
         }
         
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(41, 40, 40, 0.08);
             border-color: rgba(255, 255, 255, 0.2);
         }
 
@@ -145,6 +145,174 @@
         :fullscreen .timer-block {
             width: 20vw; /* Responsive but consistent width in fullscreen */
         }
+
+        /* --- MOBILE FULLSCREEN FIXES --- */
+        @media (max-width: 768px) {
+            :fullscreen .timer-block {
+                width: 22vw; /* Slightly larger for mobile */
+                min-width: 70px; /* Prevent becoming too small */
+            }
+            
+            :fullscreen .timer-value {
+                font-size: 3.5rem !important; /* Force larger font size on mobile */
+            }
+            
+            :fullscreen #timer-display {
+                gap: 0.5rem; /* Reduce gap on mobile */
+                flex-wrap: nowrap; /* Ensure all elements stay in one row */
+            }
+            
+            :fullscreen .timer-separator {
+                font-size: 2.5rem;
+                transform: translateY(-0.5rem);
+                margin: 0 -0.25rem;
+            }
+            
+            /* Adjust font sizes for mobile fullscreen */
+            :fullscreen #days, 
+            :fullscreen #hours, 
+            :fullscreen #minutes, 
+            :fullscreen #seconds {
+                font-size: 3.5rem !important;
+            }
+        }
+
+        /* Additional mobile-specific fullscreen adjustments */
+        @media (max-width: 480px) and (fullscreen) {
+            :fullscreen .timer-block {
+                width: 20vw;
+                min-width: 60px;
+            }
+            
+            :fullscreen .timer-value {
+                font-size: 2.8rem !important;
+            }
+            
+            :fullscreen #days, 
+            :fullscreen #hours, 
+            :fullscreen #minutes, 
+            :fullscreen #seconds {
+                font-size: 2.8rem !important;
+            }
+            
+            :fullscreen .timer-separator {
+                font-size: 2rem;
+                transform: translateY(-0.4rem);
+            }
+            
+            :fullscreen #timer-display {
+                gap: 0.25rem;
+            }
+        }
+
+        /* Fix for very small mobile devices */
+        @media (max-width: 360px) and (fullscreen) {
+            :fullscreen .timer-block {
+                width: 18vw;
+                min-width: 50px;
+            }
+            
+            :fullscreen .timer-value {
+                font-size: 2.2rem !important;
+            }
+            
+            :fullscreen #days, 
+            :fullscreen #hours, 
+            :fullscreen #minutes, 
+            :fullscreen #seconds {
+                font-size: 2.2rem !important;
+            }
+            
+            :fullscreen .timer-separator {
+                font-size: 1.6rem;
+                transform: translateY(-0.3rem);
+            }
+        }
+
+        /* Ensure proper layout in portrait mode */
+        @media (orientation: portrait) and (fullscreen) {
+            :fullscreen #timer-display {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* --- ENHANCED DATE/TIME PICKER STYLING --- */
+#date-picker, #time-picker {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+}
+
+#date-picker:hover, #time-picker:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+#date-picker:focus, #time-picker:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+    outline: none;
+}
+
+/* Placeholder text color */
+#date-picker::placeholder, #time-picker::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Calendar dropdown styling */
+#date-picker::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.7;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#date-picker::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Time picker dropdown arrow */
+#time-picker::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.7;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#time-picker::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* For Firefox */
+#date-picker::-moz-focus-inner, #time-picker::-moz-focus-inner {
+    border: 0;
+}
+
+#date-picker:-moz-ui-invalid, #time-picker:-moz-ui-invalid {
+    box-shadow: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    #date-picker, #time-picker {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+}
     </style>
 </head>
 <body class="bg-gradient-to-br from-[#111827] to-[#000000] text-white min-h-screen flex items-center justify-center p-4 transition-colors duration-500">
