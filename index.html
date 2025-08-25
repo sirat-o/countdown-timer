@@ -1,3 +1,4 @@
+<!-- version 2.0-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -439,6 +440,126 @@
 :-ms-fullscreen #help-btn {
   display: none;
 }
+
+/* Duration Picker Styles */
+      .duration-input {
+        width: 80px;
+        text-align: center;
+      }
+      
+      .duration-separator {
+        color: rgba(255, 255, 255, 0.5);
+        margin: 0 5px;
+      }
+      
+      .tab-button {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .tab-button.active {
+        background: rgba(139, 92, 246, 0.2);
+        border-color: rgba(139, 92, 246, 0.5);
+        color: white;
+      }
+      
+      .tab-content {
+        display: none;
+      }
+      
+      .tab-content.active {
+        display: flex;
+        justify-content: center;
+      }
+
+      .duration-input-container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 14px 18px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      
+      .duration-input-container:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+      }
+      
+      .duration-input-container:focus-within {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(139, 92, 246, 0.6);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+      }
+      
+      .duration-input {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 500;
+        width: 60px;
+        padding: 0;
+        margin: 0 2px;
+        -moz-appearance: textfield;
+      }
+      
+      .duration-input::-webkit-outer-spin-button,
+      .duration-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      
+      .duration-input:focus {
+        outline: none;
+      }
+      
+      .duration-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin-left: 2px;
+      }
+      
+      /* Preset Duration Buttons */
+      .preset-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+      
+      .preset-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .preset-btn:hover {
+        background: rgba(139, 92, 246, 0.15);
+        border-color: rgba(139, 92, 246, 0.4);
+        color: white;
+        transform: translateY(-2px);
+      }
+      
+      .preset-btn.active {
+        background: rgba(139, 92, 246, 0.25);
+        border-color: rgba(139, 92, 246, 0.6);
+        color: white;
+      }
     </style>
   </head>
 
@@ -455,15 +576,67 @@
 
       <div id="setup-section" class="space-y-8">
         <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Countdown Timer</h1>
-        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">Select a future date and time to begin the countdown.</p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <input type="date" id="date-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-          <input type="time" id="time-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
-          <button id="start-btn" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl shadow-purple-600/30 hover:shadow-purple-600/40 transform hover:-translate-y-1">
-            Start Countdown
-          </button>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">Select a future date and time or set a duration to begin the countdown.</p>
+        
+        <!-- Tab Selection -->
+        <div class="flex justify-center mb-6">
+          <div class="glass-card rounded-xl p-1 flex">
+            <button id="duration-tab" class="tab-button active">Duration</button>
+            <button id="datetime-tab" class="tab-button">Date & Time</button>
+            
+          </div>
         </div>
         
+        <!-- Date & Time Picker -->
+        <div id="datetime-picker" class="tab-content">
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <input type="date" id="date-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+            <input type="time" id="time-picker" class="glass-card w-full sm:w-auto text-lg px-6 py-4 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none">
+            <button id="start-datetime-btn" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl shadow-purple-600/30 hover:shadow-purple-600/40 transform hover:-translate-y-1">
+              Start Countdown
+            </button>
+          </div>
+        </div>
+        
+        <!-- Duration Picker -->
+        <div id="duration-picker" class="tab-content active">
+          <div class="flex flex-col items-center justify-center gap-6">
+            <div class="duration-input-container flex items-center">
+              <input type="number" id="duration-hours" min="0" max="99" value="0" class="duration-input">
+              <span class="duration-label">h</span>
+              
+              <span class="duration-separator mx-2">:</span>
+              
+              <input type="number" id="duration-minutes" min="0" max="59" value="0" class="duration-input">
+              <span class="duration-label">m</span>
+              
+              <span class="duration-separator mx-2">:</span>
+              
+              <input type="number" id="duration-seconds" min="0" max="59" value="0" class="duration-input">
+              <span class="duration-label">s</span>
+            </div>
+            
+            <!-- Preset Durations -->
+            <div class="w-full max-w-md">
+              <p class="text-gray-400 mb-3">Quick Presets:</p>
+              <div class="preset-grid">
+            <button class="preset-btn" data-minutes="25">25 Minutes</button>
+            <button class="preset-btn" data-minutes="30">30 Minutes</button>
+            <button class="preset-btn" data-minutes="45">45 Minutes</button>
+            <button class="preset-btn" data-minutes="50">50 Minutes</button>
+            <button class="preset-btn" data-hours="1">1 Hour</button>
+            <button class="preset-btn" data-hours="1" data-minutes="30">1 Hour 30 Minutes</button>
+            <button class="preset-btn" data-hours="2">2 Hours</button>
+            <button class="preset-btn" data-hours="3">3 Hours</button>
+
+              </div>
+            </div>
+            
+            <button id="start-duration-btn" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl shadow-purple-600/30 hover:shadow-purple-600/40 transform hover:-translate-y-1">
+              Start Countdown
+            </button>
+          </div>
+        </div>
       </div>
 
       <div id="timer-section" class="hidden">
@@ -556,349 +729,516 @@
     <div id="toast-container" class="fixed top-5 right-5 space-y-3 z-50"></div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        // --- STATE MANAGEMENT ---
-        let countdownInterval;
-        let targetDate;
-        let remainingTimeOnPause = 0;
-        let isPaused = false;
-        let wakeLock = null; // For screen wake lock
-        let noSleep = new NoSleep(); // Initialize NoSleep.js
-        let isScreenLockEnabled = false;
-        let originalTitle = document.title;
-        let titleBlinkInterval;
-        // --- DOM ELEMENT REFERENCES ---
-        const dom = {
-          setupSection: document.getElementById('setup-section'),
-          timerSection: document.getElementById('timer-section'),
-          datePicker: document.getElementById('date-picker'),
-          timePicker: document.getElementById('time-picker'),
-          startBtn: document.getElementById('start-btn'),
-          resetBtn: document.getElementById('reset-btn'),
-          pauseResumeBtn: document.getElementById('pause-resume-btn'),
-          fullscreenBtn: document.getElementById('fullscreen-btn'),
-          fullscreenIcon: document.getElementById('fullscreen-icon'),
-          exitFullscreenIcon: document.getElementById('exit-fullscreen-icon'),
-          targetDateDisplay: document.getElementById('target-date-display'),
-          daysBlock: document.getElementById('days-block'),
-          hoursBlock: document.getElementById('hours-block'),
-          separatorHM: document.getElementById('separator-hm'),
-          daysEl: document.getElementById('days'),
-          hoursEl: document.getElementById('hours'),
-          minutesEl: document.getElementById('minutes'),
-          secondsEl: document.getElementById('seconds'),
-          timerValues: document.querySelectorAll('.timer-value'),
-          timerLabels: document.querySelectorAll('.timer-label'),
-          controlButtons: document.getElementById('control-buttons'),
-          fullscreenResumeBtn: document.getElementById('fullscreen-resume-btn'),
-          helpBtn: document.getElementById('help-btn'),
-          helpModal: document.getElementById('help-modal'),
-          closeModal: document.getElementById('close-modal'),
-          modalBackdrop: document.getElementById('modal-backdrop'),
-        };
-        // --- SCREEN WAKE LOCK FUNCTIONS ---
-        async function enableScreenLock() {
-          // Try Wake Lock API first
-          try {
-            if ('wakeLock' in navigator) {
-              wakeLock = await navigator.wakeLock.request('screen');
-              console.log('Screen Wake Lock activated');
-              isScreenLockEnabled = true;
-              wakeLock.addEventListener('release', () => {
-                console.log('Screen Wake Lock was released');
-                isScreenLockEnabled = false;
-              });
-              return;
-            }
-          } catch (err) {
-            console.error(`Error activating wake lock: ${err.message}`);
-          }
-          // Fallback to NoSleep.js if Wake Lock API is not available
-          try {
-            noSleep.enable();
-            isScreenLockEnabled = true;
-            console.log('NoSleep.js screen lock activated');
-          } catch (err) {
-            console.error('Error enabling NoSleep:', err);
-            // Final fallback: Change page title on visibility change
-            enableTitleBlink();
-          }
-        }
+  document.addEventListener('DOMContentLoaded', () => {
+    // --- STATE MANAGEMENT ---
+    let countdownInterval;
+    let targetDate;
+    let remainingTimeOnPause = 0;
+    let isPaused = false;
+    let wakeLock = null; // For screen wake lock
+    let noSleep = new NoSleep(); // Initialize NoSleep.js
+    let isScreenLockEnabled = false;
+    let originalTitle = document.title;
+    let titleBlinkInterval;
+    let isDurationMode = false;
+    let activePreset = null;
+    
+    // --- DOM ELEMENT REFERENCES ---
+    const dom = {
+      setupSection: document.getElementById('setup-section'),
+      timerSection: document.getElementById('timer-section'),
+      datePicker: document.getElementById('date-picker'),
+      timePicker: document.getElementById('time-picker'),
+      startDatetimeBtn: document.getElementById('start-datetime-btn'),
+      startDurationBtn: document.getElementById('start-duration-btn'),
+      resetBtn: document.getElementById('reset-btn'),
+      pauseResumeBtn: document.getElementById('pause-resume-btn'),
+      fullscreenBtn: document.getElementById('fullscreen-btn'),
+      fullscreenIcon: document.getElementById('fullscreen-icon'),
+      exitFullscreenIcon: document.getElementById('exit-fullscreen-icon'),
+      targetDateDisplay: document.getElementById('target-date-display'),
+      daysBlock: document.getElementById('days-block'),
+      hoursBlock: document.getElementById('hours-block'),
+      separatorHM: document.getElementById('separator-hm'),
+      daysEl: document.getElementById('days'),
+      hoursEl: document.getElementById('hours'),
+      minutesEl: document.getElementById('minutes'),
+      secondsEl: document.getElementById('seconds'),
+      timerValues: document.querySelectorAll('.timer-value'),
+      timerLabels: document.querySelectorAll('.timer-label'),
+      controlButtons: document.getElementById('control-buttons'),
+      fullscreenResumeBtn: document.getElementById('fullscreen-resume-btn'),
+      helpBtn: document.getElementById('help-btn'),
+      helpModal: document.getElementById('help-modal'),
+      closeModal: document.getElementById('close-modal'),
+      modalBackdrop: document.getElementById('modal-backdrop'),
+      datetimeTab: document.getElementById('datetime-tab'),
+      durationTab: document.getElementById('duration-tab'),
+      datetimePicker: document.getElementById('datetime-picker'),
+      durationPicker: document.getElementById('duration-picker'),
+      durationHours: document.getElementById('duration-hours'),
+      durationMinutes: document.getElementById('duration-minutes'),
+      durationSeconds: document.getElementById('duration-seconds'),
+      presetButtons: document.querySelectorAll('.preset-btn')
+    };
 
-        function disableScreenLock() {
-          // Release Wake Lock if active
-          if (wakeLock !== null) {
-            wakeLock.release();
-            wakeLock = null;
-            console.log('Screen Wake Lock released');
-          }
-          // Disable NoSleep.js
-          try {
-            noSleep.disable();
-          } catch (err) {
-            console.error('Error disabling NoSleep:', err);
-          }
-          isScreenLockEnabled = false;
-          // Disable title blinking
-          disableTitleBlink();
-        }
+    // --- TAB MANAGEMENT ---
+    dom.datetimeTab.addEventListener('click', () => {
+      dom.datetimeTab.classList.add('active');
+      dom.durationTab.classList.remove('active');
+      dom.datetimePicker.classList.add('active');
+      dom.durationPicker.classList.remove('active');
+    });
 
-        function enableTitleBlink() {
-          let isBlinked = false;
-          clearInterval(titleBlinkInterval);
-          titleBlinkInterval = setInterval(() => {
-            document.title = isBlinked ? originalTitle : "⏰ Timer Active";
-            isBlinked = !isBlinked;
-          }, 1000);
-        }
+    dom.durationTab.addEventListener('click', () => {
+      dom.durationTab.classList.add('active');
+      dom.datetimeTab.classList.remove('active');
+      dom.durationPicker.classList.add('active');
+      dom.datetimePicker.classList.remove('active');
+    });
 
-        function disableTitleBlink() {
-          clearInterval(titleBlinkInterval);
-          document.title = originalTitle;
-        }
-        // Handle visibility change
-        document.addEventListener('visibilitychange', async () => {
-          if (document.visibilityState === 'visible' && !dom.timerSection.classList.contains('hidden')) {
-            // Re-enable screen lock if timer is active and tab becomes visible
-            await enableScreenLock();
-          } else if (document.visibilityState === 'hidden') {
-            // Disable screen lock to save resources when tab is hidden
-            disableScreenLock();
-          }
-        });
-        // Modal event listeners
-        dom.helpBtn.addEventListener('click', () => {
-          dom.helpModal.classList.add('active');
-          setTimeout(() => {
-            dom.helpModal.querySelector('.glass-toast').classList.remove('scale-95', 'opacity-0');
-          }, 10);
-        });
-        dom.closeModal.addEventListener('click', closeHelpModal);
-        dom.modalBackdrop.addEventListener('click', closeHelpModal);
-        // Add function to close modal
-        function closeHelpModal() {
-          dom.helpModal.querySelector('.glass-toast').classList.add('scale-95', 'opacity-0');
-          setTimeout(() => {
-            dom.helpModal.classList.remove('active');
-          }, 300);
-        }
-        // Add ESC key to close modal
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && dom.helpModal.classList.contains('active')) {
-            closeHelpModal();
-          }
-        });
-        // --- CORE TIMER LOGIC ---
-        function startTimer(target) {
-          targetDate = target;
-          isPaused = false;
-          dom.pauseResumeBtn.textContent = 'Pause';
-          dom.setupSection.classList.add('hidden');
-          dom.timerSection.classList.remove('hidden');
-          dom.timerSection.classList.add('fade-in');
-          const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          };
-          dom.targetDateDisplay.textContent = `Counting down to ${new Date(targetDate).toLocaleDateString(undefined, options)}`;
-          clearInterval(countdownInterval);
-          countdownInterval = setInterval(updateCountdown, 1000);
-          updateCountdown();
-          // Enable screen lock when timer starts
-          enableScreenLock();
-          // Update fullscreen resume button visibility
-          updateFullscreenResumeButton();
-        }
+    // --- DURATION INPUT VALIDATION ---
+    dom.durationHours.addEventListener('input', () => {
+      if (dom.durationHours.value > 99) dom.durationHours.value = 99;
+      if (dom.durationHours.value < 0) dom.durationHours.value = 0;
+    });
 
-        function updateCountdown() {
-          const now = new Date().getTime();
-          const distance = targetDate - now;
-          if (distance <= 0) {
-            clearInterval(countdownInterval);
-            Object.values(dom).filter(el => el.classList && el.classList.contains('timer-value')).forEach(el => el.textContent = '00');
-            showToast("Time's up! The countdown has finished.", 'info');
-            dom.pauseResumeBtn.disabled = true;
-            // Disable screen lock when timer completes
-            disableScreenLock();
-            return;
-          }
-          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          dom.daysEl.textContent = String(days).padStart(2, '0');
-          dom.hoursEl.textContent = String(hours).padStart(2, '0');
-          dom.minutesEl.textContent = String(minutes).padStart(2, '0');
-          dom.secondsEl.textContent = String(seconds).padStart(2, '0');
-          // Logic to hide blocks AND separators when their value is zero
-          const showDays = days > 0;
-          const showHours = hours > 0 || showDays;
-          dom.daysBlock.classList.toggle('hidden', !showDays);
-          dom.hoursBlock.classList.toggle('hidden', !showHours);
-          dom.separatorHM.classList.toggle('hidden', !showHours); // Hide separator with hours block
-        }
+    dom.durationMinutes.addEventListener('input', () => {
+      if (dom.durationMinutes.value > 59) dom.durationMinutes.value = 59;
+      if (dom.durationMinutes.value < 0) dom.durationMinutes.value = 0;
+    });
 
-        function resetTimer() {
-          clearInterval(countdownInterval);
-          localStorage.removeItem('countdownTarget');
-          isPaused = false;
-          dom.timerSection.classList.add('hidden');
-          dom.setupSection.classList.remove('hidden');
-          dom.setupSection.classList.add('fade-in');
-          dom.pauseResumeBtn.disabled = false;
-          dom.pauseResumeBtn.textContent = 'Pause';
-          const today = new Date();
-          const offset = today.getTimezoneOffset();
-          const localToday = new Date(today.getTime() - (offset * 60 * 1000));
-          dom.datePicker.value = localToday.toISOString().split('T')[0];
-          dom.timePicker.value = '';
-          // Disable screen lock when timer resets
-          disableScreenLock();
-          // Hide fullscreen resume button
-          dom.fullscreenResumeBtn.classList.remove('visible');
-          showToast('Timer has been reset.', 'info');
-        }
+    dom.durationSeconds.addEventListener('input', () => {
+      if (dom.durationSeconds.value > 59) dom.durationSeconds.value = 59;
+      if (dom.durationSeconds.value < 0) dom.durationSeconds.value = 0;
+    });
 
-        function pauseResumeTimer() {
-          isPaused = !isPaused;
-          if (isPaused) {
-            clearInterval(countdownInterval);
-            remainingTimeOnPause = targetDate - new Date().getTime();
-            dom.pauseResumeBtn.textContent = 'Resume';
-            // Disable screen lock when paused
-            disableScreenLock();
-          } else {
-            targetDate = new Date().getTime() + remainingTimeOnPause;
-            localStorage.setItem('countdownTarget', targetDate); // Re-save target on resume
-            startTimer(targetDate);
-            dom.pauseResumeBtn.textContent = 'Pause';
-          }
-          // Update fullscreen resume button visibility
-          updateFullscreenResumeButton();
-        }
-        // --- FULLSCREEN RESUME BUTTON FUNCTIONS ---
-        function updateFullscreenResumeButton() {
-          const isFullscreen = !!document.fullscreenElement;
-          if (isFullscreen && isPaused) {
-            dom.fullscreenResumeBtn.classList.add('visible');
-          } else {
-            dom.fullscreenResumeBtn.classList.remove('visible');
-          }
-        }
-        // --- EVENT LISTENERS (No changes needed here) ---
-        dom.startBtn.addEventListener('click', () => {
-          const dateValue = dom.datePicker.value;
-          const timeValue = dom.timePicker.value;
-          if (!dateValue || !timeValue) {
-            showToast('Please select both a date and a time.', 'error');
-            return;
-          }
-          const targetTimestamp = new Date(`${dateValue}T${timeValue}`).getTime();
-          if (targetTimestamp <= new Date().getTime()) {
-            showToast('Please select a time in the future.', 'error');
-            return;
-          }
-          localStorage.setItem('countdownTarget', targetTimestamp);
-          startTimer(targetTimestamp);
-          showToast('Countdown started successfully!', 'success');
-        });
-        dom.resetBtn.addEventListener('click', resetTimer);
-        dom.pauseResumeBtn.addEventListener('click', pauseResumeTimer);
-        // Fullscreen resume button click handler
-        dom.fullscreenResumeBtn.addEventListener('click', () => {
-          if (isPaused) {
-            pauseResumeTimer();
-          }
-        });
-        // Add spacebar functionality for pause/resume
-        document.addEventListener('keydown', (e) => {
-          // Only trigger if timer is active and not in an input field
-          if (e.code === 'Space' && !dom.timerSection.classList.contains('hidden') &&
-            e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-            e.preventDefault();
-            pauseResumeTimer();
-          }
-          // Add 'f' key for fullscreen toggle
-          if (e.code === 'KeyF' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-            e.preventDefault();
-            toggleFullscreen();
-          }
-        });
-        // Enhanced fullscreen functionality
-        function toggleFullscreen() {
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-              showToast(`Error enabling full-screen mode: ${err.message}`, 'error');
-            });
-          } else {
-            document.exitFullscreen();
-          }
-        }
-        dom.fullscreenBtn.addEventListener('click', toggleFullscreen);
-        document.addEventListener('fullscreenchange', () => {
-          const isFullscreen = !!document.fullscreenElement;
-          if (dom.timerSection.classList.contains('hidden')) return;
-          dom.controlButtons.classList.toggle('hidden', isFullscreen);
-          dom.targetDateDisplay.classList.toggle('hidden', isFullscreen);
-          dom.fullscreenIcon.classList.toggle('hidden', isFullscreen);
-          dom.exitFullscreenIcon.classList.toggle('hidden', !isFullscreen);
-          dom.timerValues.forEach(el => {
-            el.classList.toggle('md:text-8xl', !isFullscreen);
-            el.classList.toggle('text-5xl', !isFullscreen);
-            el.classList.toggle('md:text-9xl', isFullscreen);
-            el.classList.toggle('lg:text-[15vw]', isFullscreen);
-          });
-          dom.timerLabels.forEach(el => el.classList.toggle('hidden', isFullscreen));
-          // Update fullscreen resume button visibility
-          updateFullscreenResumeButton();
-        });
-        // --- TOAST NOTIFICATION SYSTEM (No changes needed here) ---
-        function showToast(message, type = 'info') {
-          const toastContainer = document.getElementById('toast-container');
-          const toast = document.createElement('div');
-          let icon, progressColor;
-          switch (type) {
-            case 'success':
-              progressColor = 'bg-green-400';
-              icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
-              break;
-            case 'error':
-              progressColor = 'bg-red-400';
-              icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-              break;
-            default:
-              progressColor = 'bg-blue-400';
-              icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-              break;
-          }
-          toast.className = `toast glass-toast text-white p-4 rounded-lg flex items-center gap-4 w-full max-w-sm`;
-          toast.innerHTML = `<div class="flex-shrink-0">${icon}</div><div class="flex-grow text-sm font-medium">${message}</div><div class="absolute bottom-0 left-0 w-full h-1"><div class="${progressColor} toast-progress"></div></div>`;
-          toastContainer.appendChild(toast);
-          setTimeout(() => toast.remove(), 5000);
-        }
-        // --- INITIALIZATION ---
-        function init() {
-          const today = new Date();
-          const offset = today.getTimezoneOffset();
-          const localToday = new Date(today.getTime() - (offset * 60 * 1000));
-          dom.datePicker.value = localToday.toISOString().split('T')[0];
-          const savedTarget = localStorage.getItem('countdownTarget');
-          if (savedTarget) {
-            const targetTime = parseInt(savedTarget, 10);
-            if (targetTime > new Date().getTime()) {
-              startTimer(targetTime);
-            } else {
-              localStorage.removeItem('countdownTarget');
-            }
-          }
-        }
-        init();
+    // --- PRESET DURATION HANDLING ---
+    function clearActivePreset() {
+      if (activePreset) {
+        activePreset.classList.remove('active');
+        activePreset = null;
+      }
+    }
+
+    function setDurationFromPreset(hours = 0, minutes = 0, seconds = 0) {
+      dom.durationHours.value = hours;
+      dom.durationMinutes.value = minutes;
+      dom.durationSeconds.value = seconds;
+    }
+
+    dom.presetButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Clear any previously active preset
+        clearActivePreset();
+        
+        // Set the clicked button as active
+        button.classList.add('active');
+        activePreset = button;
+        
+        // Get the duration from data attributes
+        const hours = parseInt(button.getAttribute('data-hours')) || 0;
+        const minutes = parseInt(button.getAttribute('data-minutes')) || 0;
+        const seconds = parseInt(button.getAttribute('data-seconds')) || 0;
+        
+        // Set the duration inputs
+        setDurationFromPreset(hours, minutes, seconds);
       });
-    </script>
+    });
+
+    // --- SCREEN WAKE LOCK FUNCTIONS ---
+    async function enableScreenLock() {
+      // Try Wake Lock API first
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Screen Wake Lock activated');
+          isScreenLockEnabled = true;
+          wakeLock.addEventListener('release', () => {
+            console.log('Screen Wake Lock was released');
+            isScreenLockEnabled = false;
+          });
+          return;
+        }
+      } catch (err) {
+        console.error(`Error activating wake lock: ${err.message}`);
+      }
+      // Fallback to NoSleep.js if Wake Lock API is not available
+      try {
+        noSleep.enable();
+        isScreenLockEnabled = true;
+        console.log('NoSleep.js screen lock activated');
+      } catch (err) {
+        console.error('Error enabling NoSleep:', err);
+        // Final fallback: Change page title on visibility change
+        enableTitleBlink();
+      }
+    }
+
+    function disableScreenLock() {
+      // Release Wake Lock if active
+      if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+        console.log('Screen Wake Lock released');
+      }
+      // Disable NoSleep.js
+      try {
+        noSleep.disable();
+      } catch (err) {
+        console.error('Error disabling NoSleep:', err);
+      }
+      isScreenLockEnabled = false;
+      // Disable title blinking
+      disableTitleBlink();
+    }
+
+    function enableTitleBlink() {
+      let isBlinked = false;
+      clearInterval(titleBlinkInterval);
+      titleBlinkInterval = setInterval(() => {
+        document.title = isBlinked ? originalTitle : "⏰ Timer Active";
+        isBlinked = !isBlinked;
+      }, 1000);
+    }
+
+    function disableTitleBlink() {
+      clearInterval(titleBlinkInterval);
+      document.title = originalTitle;
+    }
+    
+    // Handle visibility change
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible' && !dom.timerSection.classList.contains('hidden')) {
+        // Re-enable screen lock if timer is active and tab becomes visible
+        await enableScreenLock();
+      } else if (document.visibilityState === 'hidden') {
+        // Disable screen lock to save resources when tab is hidden
+        disableScreenLock();
+      }
+    });
+    
+    // Modal event listeners
+    dom.helpBtn.addEventListener('click', () => {
+      dom.helpModal.classList.add('active');
+      setTimeout(() => {
+        dom.helpModal.querySelector('.glass-toast').classList.remove('scale-95', 'opacity-0');
+      }, 10);
+    });
+    
+    dom.closeModal.addEventListener('click', closeHelpModal);
+    dom.modalBackdrop.addEventListener('click', closeHelpModal);
+    
+    // Add function to close modal
+    function closeHelpModal() {
+      dom.helpModal.querySelector('.glass-toast').classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        dom.helpModal.classList.remove('active');
+      }, 300);
+    }
+    
+    // Add ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dom.helpModal.classList.contains('active')) {
+        closeHelpModal();
+      }
+    });
+
+    // --- CORE TIMER LOGIC ---
+    function startTimer(target, isDuration = false) {
+      isDurationMode = isDuration;
+      targetDate = target;
+      isPaused = false;
+      dom.pauseResumeBtn.textContent = 'Pause';
+      dom.setupSection.classList.add('hidden');
+      dom.timerSection.classList.remove('hidden');
+      dom.timerSection.classList.add('fade-in');
+      
+      if (isDuration) {
+        dom.targetDateDisplay.textContent = 'Counting down from duration';
+      } else {
+        const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        };
+        dom.targetDateDisplay.textContent = `Counting down to ${new Date(targetDate).toLocaleDateString(undefined, options)}`;
+      }
+      
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+      
+      // Enable screen lock when timer starts
+      enableScreenLock();
+      
+      // Update fullscreen resume button visibility
+      updateFullscreenResumeButton();
+    }
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      
+      if (distance <= 0) {
+        clearInterval(countdownInterval);
+        Object.values(dom).filter(el => el.classList && el.classList.contains('timer-value')).forEach(el => el.textContent = '00');
+        showToast("Time's up! The countdown has finished.", 'info');
+        dom.pauseResumeBtn.disabled = true;
+        
+        // Disable screen lock when timer completes
+        disableScreenLock();
+        return;
+      }
+      
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      dom.daysEl.textContent = String(days).padStart(2, '0');
+      dom.hoursEl.textContent = String(hours).padStart(2, '0');
+      dom.minutesEl.textContent = String(minutes).padStart(2, '0');
+      dom.secondsEl.textContent = String(seconds).padStart(2, '0');
+      
+      // Logic to hide blocks AND separators when their value is zero
+      const showDays = days > 0;
+      const showHours = hours > 0 || showDays;
+      
+      dom.daysBlock.classList.toggle('hidden', !showDays);
+      dom.hoursBlock.classList.toggle('hidden', !showHours);
+      dom.separatorHM.classList.toggle('hidden', !showHours); // Hide separator with hours block
+    }
+
+    function resetTimer() {
+      clearInterval(countdownInterval);
+      localStorage.removeItem('countdownTarget');
+      localStorage.removeItem('isDurationMode');
+      isPaused = false;
+      isDurationMode = false;
+      dom.timerSection.classList.add('hidden');
+      dom.setupSection.classList.remove('hidden');
+      dom.setupSection.classList.add('fade-in');
+      dom.pauseResumeBtn.disabled = false;
+      dom.pauseResumeBtn.textContent = 'Pause';
+      
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      const localToday = new Date(today.getTime() - (offset * 60 * 1000));
+      dom.datePicker.value = localToday.toISOString().split('T')[0];
+      dom.timePicker.value = '';
+      
+      // Reset duration inputs
+      dom.durationHours.value = '0';
+      dom.durationMinutes.value = '0';
+      dom.durationSeconds.value = '0';
+      
+      // Disable screen lock when timer resets
+      disableScreenLock();
+      
+      // Hide fullscreen resume button
+      dom.fullscreenResumeBtn.classList.remove('visible');
+      showToast('Timer has been reset.', 'info');
+    }
+
+    function pauseResumeTimer() {
+      isPaused = !isPaused;
+      
+      if (isPaused) {
+        clearInterval(countdownInterval);
+        remainingTimeOnPause = targetDate - new Date().getTime();
+        dom.pauseResumeBtn.textContent = 'Resume';
+        
+        // Disable screen lock when paused
+        disableScreenLock();
+      } else {
+        targetDate = new Date().getTime() + remainingTimeOnPause;
+        localStorage.setItem('countdownTarget', targetDate); // Re-save target on resume
+        
+        if (isDurationMode) {
+          localStorage.setItem('isDurationMode', 'true');
+        }
+        
+        startTimer(targetDate, isDurationMode);
+        dom.pauseResumeBtn.textContent = 'Pause';
+      }
+      
+      // Update fullscreen resume button visibility
+      updateFullscreenResumeButton();
+    }
+    
+    // --- FULLSCREEN RESUME BUTTON FUNCTIONS ---
+    function updateFullscreenResumeButton() {
+      const isFullscreen = !!document.fullscreenElement;
+      if (isFullscreen && isPaused) {
+        dom.fullscreenResumeBtn.classList.add('visible');
+      } else {
+        dom.fullscreenResumeBtn.classList.remove('visible');
+      }
+    }
+    
+    // --- EVENT LISTENERS ---
+    dom.startDatetimeBtn.addEventListener('click', () => {
+      const dateValue = dom.datePicker.value;
+      const timeValue = dom.timePicker.value;
+      
+      if (!dateValue || !timeValue) {
+        showToast('Please select both a date and a time.', 'error');
+        return;
+      }
+      
+      const targetTimestamp = new Date(`${dateValue}T${timeValue}`).getTime();
+      
+      if (targetTimestamp <= new Date().getTime()) {
+        showToast('Please select a time in the future.', 'error');
+        return;
+      }
+      
+      localStorage.setItem('countdownTarget', targetTimestamp);
+      localStorage.removeItem('isDurationMode');
+      startTimer(targetTimestamp, false);
+      showToast('Countdown started successfully!', 'success');
+    });
+    
+    dom.startDurationBtn.addEventListener('click', () => {
+      const hours = parseInt(dom.durationHours.value) || 0;
+      const minutes = parseInt(dom.durationMinutes.value) || 0;
+      const seconds = parseInt(dom.durationSeconds.value) || 0;
+      
+      if (hours === 0 && minutes === 0 && seconds === 0) {
+        showToast('Please set a duration greater than zero.', 'error');
+        return;
+      }
+      
+      const totalMilliseconds = (hours * 60 * 60 * 1000) + 
+                               (minutes * 60 * 1000) + 
+                               (seconds * 1000);
+      
+      const targetTimestamp = new Date().getTime() + totalMilliseconds;
+      
+      localStorage.setItem('countdownTarget', targetTimestamp);
+      localStorage.setItem('isDurationMode', 'true');
+      startTimer(targetTimestamp, true);
+      showToast('Duration countdown started successfully!', 'success');
+    });
+    
+    dom.resetBtn.addEventListener('click', resetTimer);
+    dom.pauseResumeBtn.addEventListener('click', pauseResumeTimer);
+    
+    // Fullscreen resume button click handler
+    dom.fullscreenResumeBtn.addEventListener('click', () => {
+      if (isPaused) {
+        pauseResumeTimer();
+      }
+    });
+    
+    // Add spacebar functionality for pause/resume
+    document.addEventListener('keydown', (e) => {
+      // Only trigger if timer is active and not in an input field
+      if (e.code === 'Space' && !dom.timerSection.classList.contains('hidden') &&
+        e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        pauseResumeTimer();
+      }
+      
+      // Add 'f' key for fullscreen toggle
+      if (e.code === 'KeyF' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+    
+    // Enhanced fullscreen functionality
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          showToast(`Error enabling full-screen mode: ${err.message}`, 'error');
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    
+    dom.fullscreenBtn.addEventListener('click', toggleFullscreen);
+    
+    document.addEventListener('fullscreenchange', () => {
+      const isFullscreen = !!document.fullscreenElement;
+      
+      if (dom.timerSection.classList.contains('hidden')) return;
+      
+      dom.controlButtons.classList.toggle('hidden', isFullscreen);
+      dom.targetDateDisplay.classList.toggle('hidden', isFullscreen);
+      dom.fullscreenIcon.classList.toggle('hidden', isFullscreen);
+      dom.exitFullscreenIcon.classList.toggle('hidden', !isFullscreen);
+      
+      dom.timerValues.forEach(el => {
+        el.classList.toggle('md:text-8xl', !isFullscreen);
+        el.classList.toggle('text-5xl', !isFullscreen);
+        el.classList.toggle('md:text-9xl', isFullscreen);
+        el.classList.toggle('lg:text-[15vw]', isFullscreen);
+      });
+      
+      dom.timerLabels.forEach(el => el.classList.toggle('hidden', isFullscreen));
+      
+      // Update fullscreen resume button visibility
+      updateFullscreenResumeButton();
+    });
+    
+    // --- TOAST NOTIFICATION SYSTEM ---
+    function showToast(message, type = 'info') {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let icon, progressColor;
+      
+      switch (type) {
+        case 'success':
+          progressColor = 'bg-green-400';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
+          break;
+        case 'error':
+          progressColor = 'bg-red-400';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+          break;
+        default:
+          progressColor = 'bg-blue-400';
+          icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+          break;
+      }
+      
+      toast.className = `toast glass-toast text-white p-4 rounded-lg flex items-center gap-4 w-full max-w-sm`;
+      toast.innerHTML = `<div class="flex-shrink-0">${icon}</div><div class="flex-grow text-sm font-medium">${message}</div><div class="absolute bottom-0 left-0 w-full h-1"><div class="${progressColor} toast-progress"></div></div>`;
+      toastContainer.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 5000);
+    }
+    
+    // --- INITIALIZATION ---
+    function init() {
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      const localToday = new Date(today.getTime() - (offset * 60 * 1000));
+      dom.datePicker.value = localToday.toISOString().split('T')[0];
+      
+      const savedTarget = localStorage.getItem('countdownTarget');
+      const savedIsDuration = localStorage.getItem('isDurationMode');
+      
+      if (savedTarget) {
+        const targetTime = parseInt(savedTarget, 10);
+        if (targetTime > new Date().getTime()) {
+          startTimer(targetTime, savedIsDuration === 'true');
+        } else {
+          localStorage.removeItem('countdownTarget');
+          localStorage.removeItem('isDurationMode');
+        }
+      }
+    }
+    
+    init();
+  });
+</script>
   </body>
 
 </html>
